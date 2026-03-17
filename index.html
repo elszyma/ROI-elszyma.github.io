@@ -3,71 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Executive ROI Analyst with Charts</title>
+    <title>Executive ROI Analyst Pro</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --primary: #0f172a; --accent: #10b981; --bg: #f8fafc; --secondary: #3b82f6; --border: #e2e8f0; }
         body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); padding: 20px; color: var(--primary); }
-        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
-        h2 { border-bottom: 2px solid var(--bg); padding-bottom: 15px; margin-top: 0; }
+        h2 { border-bottom: 2px solid var(--bg); padding-bottom: 15px; margin-top: 0; display: flex; align-items: center; gap: 10px; }
         h3 { color: var(--secondary); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin: 25px 0 10px 0; border-bottom: 1px solid #eee; }
         label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.85rem; color: #64748b; }
-        input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; font-size: 1rem; }
-       
-        .dashboard { background: var(--primary); color: white; padding: 30px; border-radius: 12px; display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; margin-bottom: 30px; }
-        .stat-val { display: block; font-size: 2rem; font-weight: 800; color: var(--accent); }
-        .stat-label { font-size: 0.75rem; text-transform: uppercase; opacity: 0.7; }
+        input, textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; font-size: 1rem; font-family: inherit; }
+        textarea { height: 80px; resize: none; }
+        
+        .dashboard { background: var(--primary); color: white; padding: 30px; border-radius: 12px; display: grid; grid-template-columns: repeat(4, 1fr); text-align: center; margin-bottom: 30px; gap: 10px; }
+        .stat-val { display: block; font-size: 1.6rem; font-weight: 800; color: var(--accent); margin-top: 5px; }
+        .stat-label { font-size: 0.7rem; text-transform: uppercase; opacity: 0.7; font-weight: bold; }
 
-        .chart-container { margin: 30px 0; height: 300px; position: relative; }
+        .chart-container { margin: 20px 0; height: 350px; position: relative; }
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 10px; }
-        th { text-align: left; background: #f1f5f9; padding: 10px; border-bottom: 2px solid var(--border); }
-        td { padding: 10px; border-bottom: 1px solid var(--border); }
-       
-        .btn-download { background: var(--secondary); color: white; border: none; padding: 18px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; margin-top: 30px; }
+        th { text-align: left; background: #f1f5f9; padding: 12px; border-bottom: 2px solid var(--border); }
+        td { padding: 12px; border-bottom: 1px solid var(--border); }
+        
+        .btn-download { background: var(--secondary); color: white; border: none; padding: 18px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; margin-top: 20px; transition: opacity 0.2s; }
+        .btn-download:hover { opacity: 0.9; }
         .neg { color: #ef4444; }
+        .confidence-box { background: #f1f5f9; padding: 15px; border-radius: 8px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container" id="report-content">
-    <h2>ROI Analysis: <input type="text" id="clientName" placeholder="Client Name" style="border:none; border-bottom:2px solid var(--secondary); outline:none; font-size:1.5rem; color: var(--primary); width: 300px;"></h2>
-   
+    <h2>ROI Analysis: <input type="text" id="clientName" placeholder="Client or Project Name" style="border:none; border-bottom:2px solid var(--secondary); outline:none; font-size:1.5rem; color: var(--primary); width: 400px; margin-bottom: 0;"></h2>
+    
     <div class="grid">
         <div>
-            <h3>Investment</h3>
+            <h3>Investment Details</h3>
             <label>Upfront Solution Cost ($)</label>
-            <input type="number" id="softwareCost" value="20000" oninput="updateAll()">
+            <input type="number" id="softwareCost" value="50000" oninput="updateAll()">
 
-            <label>Discount Rate (%)</label>
+            <label>Annual Discount Rate (%)</label>
             <input type="number" id="discountRate" value="10" oninput="updateAll()">
+
+            <h3>Assumptions</h3>
+            <textarea id="assumptions" placeholder="Enter key business assumptions here (e.g. 'Reduced 15 hours of manual entry per week per employee')..." oninput="updateAll()"></textarea>
         </div>
         <div>
-            <h3>Annual Savings</h3>
-            <label>Estimated Labor & Error Savings ($)</label>
-            <input type="number" id="annualSavingsInput" value="12000" oninput="updateAll()">
+            <h3>Benefit Projection</h3>
+            <label>Gross Annual Savings / Gains ($)</label>
+            <input type="number" id="annualSavingsInput" value="35000" oninput="updateAll()">
+
+            <div class="confidence-box">
+                <label>Realization Confidence: <span id="confidenceLabel" style="color:var(--secondary)">100</span>%</label>
+                <input type="range" id="confidenceSlider" min="10" max="100" value="100" step="5" oninput="updateAll()" style="accent-color: var(--secondary); cursor: pointer;">
+                <p style="font-size: 0.75rem; color: #64748b; margin: 5px 0 0 0;">Adjust to visualize "conservative" vs "optimistic" outcomes.</p>
+            </div>
         </div>
     </div>
 
     <div class="dashboard">
-        <div><span class="stat-label">Annual Savings</span><span id="netSavings" class="stat-val">$0</span></div>
-        <div><span class="stat-label">3-Year NPV</span><span id="npvFinal" class="stat-val">$0</span></div>
+        <div><span class="stat-label">Adj. Annual Savings</span><span id="netSavings" class="stat-val">$0</span></div>
+        <div><span class="stat-label">5-Year NPV</span><span id="npvFinal" class="stat-val">$0</span></div>
         <div><span class="stat-label">Year 1 ROI</span><span id="roiFinal" class="stat-val">0%</span></div>
+        <div><span class="stat-label">Payback Period</span><span id="paybackVal" class="stat-val">--</span></div>
     </div>
 
     <div class="grid">
         <div>
-            <h3>Payback Trend</h3>
+            <h3>Cumulative Cash Flow (NPV)</h3>
             <div class="chart-container">
                 <canvas id="roiChart"></canvas>
             </div>
         </div>
         <div>
-            <h3>Cash Flow Table</h3>
+            <h3>Financial Breakdown</h3>
             <table>
                 <thead>
-                    <tr><th>Year</th><th>Flow</th><th>Cumul. NPV</th></tr>
+                    <tr><th>Year</th><th>Benefit</th><th>Cumul. Value</th></tr>
                 </thead>
                 <tbody id="cashflow-table"></tbody>
             </table>
@@ -83,46 +96,73 @@
     let myChart;
 
     function updateAll() {
+        // Inputs
         const cost = parseFloat(document.getElementById('softwareCost').value) || 0;
-        const savings = parseFloat(document.getElementById('annualSavingsInput').value) || 0;
+        const baseSavings = parseFloat(document.getElementById('annualSavingsInput').value) || 0;
         const rate = (parseFloat(document.getElementById('discountRate').value) || 0) / 100;
+        const confidence = (parseFloat(document.getElementById('confidenceSlider').value) || 100) / 100;
 
-        document.getElementById('netSavings').innerText = '$' + savings.toLocaleString();
-        document.getElementById('roiFinal').innerText = cost > 0 ? Math.round((savings / cost) * 100) + '%' : '0%';
+        // Apply Confidence Multiplier
+        const adjustedSavings = baseSavings * confidence;
+        document.getElementById('confidenceLabel').innerText = Math.round(confidence * 100);
 
+        // Dashboard Stat Calculations
+        document.getElementById('netSavings').innerText = '$' + Math.round(adjustedSavings).toLocaleString();
+        document.getElementById('roiFinal').innerText = cost > 0 ? Math.round((adjustedSavings / cost) * 100) + '%' : '0%';
+
+        // Payback Calculation
+        let paybackText = "Non-Recoverable";
+        if (adjustedSavings > 0) {
+            const months = (cost / adjustedSavings) * 12;
+            if (months <= 12) {
+                paybackText = Math.round(months) + " Months";
+            } else if (months <= 60) {
+                paybackText = (months / 12).toFixed(1) + " Years";
+            } else {
+                paybackText = "> 5 Years";
+            }
+        }
+        document.getElementById('paybackVal').innerText = paybackText;
+
+        // 5-Year Financial Engine
         let tableHTML = "";
         let cumulativeNPV = -cost;
         let chartData = [-cost];
-       
-        // Year 0 row
+        let labels = ['Year 0'];
+        
+        // Year 0 (Investment)
         tableHTML += `<tr><td>0 (Initial)</td><td class="neg">-$${cost.toLocaleString()}</td><td class="neg">$${Math.round(cumulativeNPV).toLocaleString()}</td></tr>`;
 
-        for (let t = 1; t <= 3; t++) {
-            const pv = savings / Math.pow((1 + rate), t);
+        for (let t = 1; t <= 5; t++) {
+            const pv = adjustedSavings / Math.pow((1 + rate), t);
             cumulativeNPV += pv;
             chartData.push(Math.round(cumulativeNPV));
-           
+            labels.push(`Year ${t}`);
+            
+            const isPos = cumulativeNPV >= 0;
             tableHTML += `<tr>
                 <td>Year ${t}</td>
-                <td>$${savings.toLocaleString()}</td>
-                <td style="font-weight:bold; color:${cumulativeNPV >= 0 ? 'var(--accent)' : '#ef4444'}">$${Math.round(cumulativeNPV).toLocaleString()}</td>
+                <td>$${Math.round(adjustedSavings).toLocaleString()}</td>
+                <td style="font-weight:bold; color:${isPos ? 'var(--accent)' : '#ef4444'}">
+                    ${isPos ? '' : '-'}$${Math.abs(Math.round(cumulativeNPV)).toLocaleString()}
+                </td>
             </tr>`;
         }
 
         document.getElementById('cashflow-table').innerHTML = tableHTML;
         document.getElementById('npvFinal').innerText = '$' + Math.round(cumulativeNPV).toLocaleString();
-       
-        updateChart(chartData);
+        
+        updateChart(chartData, labels);
     }
 
-    function updateChart(data) {
+    function updateChart(data, labels) {
         const ctx = document.getElementById('roiChart').getContext('2d');
         if (myChart) myChart.destroy();
 
         myChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['Year 0', 'Year 1', 'Year 2', 'Year 3'],
+                labels: labels,
                 datasets: [{
                     label: 'Cumulative NPV ($)',
                     data: data,
@@ -130,33 +170,58 @@
                     backgroundColor: 'rgba(16, 185, 129, 0.1)',
                     fill: true,
                     tension: 0.3,
-                    pointRadius: 6
+                    pointRadius: 6,
+                    pointBackgroundColor: '#10b981',
+                    pointHoverRadius: 8
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: { y: { grid: { color: '#eee' } } }
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => ` Value: $${context.parsed.y.toLocaleString()}`
+                        }
+                    }
+                },
+                scales: { 
+                    y: { 
+                        grid: { 
+                            color: (context) => context.tick.value === 0 ? '#64748b' : '#e2e8f0',
+                            lineWidth: (context) => context.tick.value === 0 ? 2 : 1
+                        },
+                        ticks: {
+                            callback: (value) => '$' + value.toLocaleString()
+                        }
+                    } 
+                }
             }
         });
     }
 
     function generatePDF() {
         const element = document.getElementById('report-content');
-        const client = document.getElementById('clientName').value || 'Client';
+        const client = document.getElementById('clientName').value || 'Business_Case';
+        const buttons = document.querySelector('.no-pdf');
+        
+        buttons.style.display = 'none';
+        
         const opt = {
-            margin: 5,
-            filename: `ROI_Analysis_${client}.pdf`,
+            margin: 10,
+            filename: `ROI_Analysis_${client.replace(/\s+/g, '_')}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2, useCORS: true },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' } // Landscape fits chart/table better
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
         };
-        document.querySelector('.no-pdf').style.display = 'none';
+
         html2pdf().set(opt).from(element).save().then(() => {
-            document.querySelector('.no-pdf').style.display = 'block';
+            buttons.style.display = 'block';
         });
     }
 
+    // Initial render
     updateAll();
 </script>
 
