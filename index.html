@@ -61,7 +61,7 @@
                 <span class="section-tag">Year 1 Training Impact</span>
                 <div class="cost-row">
                     <div>
-                        <label>Analysts to Train</label>
+                        <label>Users to Train</label>
                         <input type="number" id="numUsers" value="20" oninput="updateAll()">
                     </div>
                     <div>
@@ -215,7 +215,7 @@
             </tr>`;
         }
 
-        // 5. Payback (Simple)
+        // 5. Payback
         let paybackText = "Non-Recoverable";
         for (let i = 0; i < chartData.length; i++) {
             if (chartData[i] >= 0) {
