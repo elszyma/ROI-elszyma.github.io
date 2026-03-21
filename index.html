@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Service Desk ROI Analyst Pro (Multi-Year Cost)</title>
+    <title>Service Desk ROI & Training Analyst</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -29,8 +29,9 @@
         
         .btn-download { background: var(--secondary); color: white; border: none; padding: 18px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; margin-top: 20px; }
         .neg { color: #ef4444; }
-        .benefit-calc-box { background: #f8fafc; border: 1px solid var(--border); padding: 20px; border-radius: 8px; }
+        .calc-box { background: #f8fafc; border: 1px solid var(--border); padding: 20px; border-radius: 8px; margin-bottom: 20px; }
         .readonly-highlight { background: #e2e8f0; font-weight: bold; color: var(--primary); }
+        .section-tag { background: #dbeafe; color: #1e40af; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; margin-bottom: 10px; display: inline-block; }
     </style>
 </head>
 <body>
@@ -40,79 +41,111 @@
     
     <div class="grid">
         <div>
-            <h3>Investment Schedule</h3>
+            <h3>Software & Implementation Costs</h3>
             <div class="cost-row">
                 <div>
-                    <label>Year 1 Cost ($)</label>
+                    <label>Year 1 Licensing ($)</label>
                     <input type="number" id="costY1" value="50000" oninput="updateAll()">
                 </div>
                 <div>
-                    <label>Year 2 Cost ($)</label>
+                    <label>Year 2 Maint. ($)</label>
                     <input type="number" id="costY2" value="10000" oninput="updateAll()">
                 </div>
                 <div>
-                    <label>Year 3 Cost ($)</label>
+                    <label>Year 3 Maint. ($)</label>
                     <input type="number" id="costY3" value="10000" oninput="updateAll()">
                 </div>
             </div>
 
+            <div class="calc-box">
+                <span class="section-tag">Year 1 Training Impact</span>
+                <div class="cost-row">
+                    <div>
+                        <label>Analysts to Train</label>
+                        <input type="number" id="numUsers" value="20" oninput="updateAll()">
+                    </div>
+                    <div>
+                        <label>Training Hours</label>
+                        <input type="number" id="trainingHours" value="8" oninput="updateAll()">
+                    </div>
+                    <div>
+                        <label>Labor Rate ($/hr)</label>
+                        <input type="number" id="trainingLaborRate" value="45" oninput="updateAll()">
+                    </div>
+                </div>
+                <label>Other Training Expenses (Per User $)</label>
+                <input type="number" id="trainingOtherPerUser" value="150" oninput="updateAll()">
+                
+                <label style="color:var(--secondary)">Total Training Investment (Year 1 only)</label>
+                <input type="text" id="totalTrainingCostDisplay" class="readonly-highlight" readonly>
+            </div>
+
             <label>Annual Discount Rate (%)</label>
             <input type="number" id="discountRate" value="8" oninput="updateAll()">
-
-            <h3>Project Assumptions</h3>
-            <textarea id="assumptions" placeholder="Explain the logic (e.g., 'Year 1 includes $40k licensing + $10k implementation. Years 2-3 are 20% maintenance fees.')" oninput="updateAll()"></textarea>
         </div>
 
-        <div class="benefit-calc-box">
+        <div>
             <h3>Benefit Drivers (Annual)</h3>
-            
-            <label>Total Annual Service Requests</label>
-            <input type="number" id="annualRequests" value="15000" oninput="updateAll()">
+            <div class="calc-box">
+                <span class="section-tag">Efficiency Gains</span>
+                <label>Total Annual Service Requests</label>
+                <input type="number" id="annualRequests" value="15000" oninput="updateAll()">
 
-            <label>Avg. Time to Resolve (Hours)</label>
-            <input type="number" id="resolveTime" value="0.8" step="0.1" oninput="updateAll()">
+                <div class="cost-row">
+                    <div>
+                        <label>Avg. Time (Hrs)</label>
+                        <input type="number" id="resolveTime" value="0.8" step="0.1" oninput="updateAll()">
+                    </div>
+                    <div>
+                        <label>Labor Rate ($/hr)</label>
+                        <input type="number" id="laborRate" value="48" oninput="updateAll()">
+                    </div>
+                    <div>
+                        <label>Reduction (%)</label>
+                        <input type="number" id="reductionPercent" value="25" oninput="updateAll()">
+                    </div>
+                </div>
 
-            <label>Analyst Fully Burdened Labor Rate ($/hr)</label>
-            <input type="number" id="laborRate" value="48" oninput="updateAll()">
+                <label style="color: var(--secondary);">Calculated Gross Annual Savings</label>
+                <input type="text" id="calculatedGrossSavings" class="readonly-highlight" readonly style="margin-bottom: 20px;">
+                
+                <label>Realization Confidence: <span id="confidenceLabel">100</span>%</label>
+                <input type="range" id="confidenceSlider" min="10" max="100" value="100" step="5" oninput="updateAll()" style="accent-color: var(--secondary);">
+            </div>
 
-            <label>Expected Reduction via Automation (%)</label>
-            <input type="number" id="reductionPercent" value="25" oninput="updateAll()">
-
-            <label style="color: var(--secondary);">Calculated Gross Annual Savings</label>
-            <input type="text" id="calculatedGrossSavings" class="readonly-highlight" readonly>
-            
-            <label>Realization Confidence: <span id="confidenceLabel">100</span>%</label>
-            <input type="range" id="confidenceSlider" min="10" max="100" value="100" step="5" oninput="updateAll()" style="accent-color: var(--secondary);">
+            <h3>Project Assumptions</h3>
+            <textarea id="assumptions" placeholder="Notes: Training includes initial certification and onboarding logic..."></textarea>
         </div>
     </div>
 
     <div class="dashboard">
         <div><span class="stat-label">Net Annual Savings</span><span id="netSavings" class="stat-val">$0</span></div>
         <div><span class="stat-label">5-Year NPV</span><span id="npvFinal" class="stat-val">$0</span></div>
-        <div><span class="stat-label">Total 3-Yr Cost</span><span id="totalInvestment" class="stat-val">$0</span></div>
+        <div><span class="stat-label">Total Upfront Cost</span><span id="totalInvestment" class="stat-val">$0</span></div>
         <div><span class="stat-label">Payback Period</span><span id="paybackVal" class="stat-val">--</span></div>
     </div>
 
     <div class="grid">
         <div>
-            <h3>Cumulative Cash Flow</h3>
+            <h3>Cumulative NPV Projection</h3>
             <div class="chart-container">
                 <canvas id="roiChart"></canvas>
             </div>
         </div>
         <div>
-            <h3>5-Year Projection Table</h3>
+            <h3>Financial Table</h3>
             <table>
                 <thead>
-                    <tr><th>Year</th><th>Cost</th><th>Savings</th><th>Cumul. NPV</th></tr>
+                    <tr><th>Year</th><th>Cost*</th><th>Benefit</th><th>Cumul. NPV</th></tr>
                 </thead>
                 <tbody id="cashflow-table"></tbody>
             </table>
+            <p style="font-size: 0.7rem; color: #64748b; margin-top: 10px;">*Year 1 Cost includes Software Licensing + Total Training Investment.</p>
         </div>
     </div>
 
     <div class="no-pdf">
-        <button class="btn-download" onclick="generatePDF()">Download Executive Business Case</button>
+        <button class="btn-download" onclick="generatePDF()">Download Business Case PDF</button>
     </div>
 </div>
 
@@ -120,21 +153,28 @@
     let myChart;
 
     function updateAll() {
-        // 1. Get Multi-Year Costs
-        const costs = [
-            parseFloat(document.getElementById('costY1').value) || 0,
-            parseFloat(document.getElementById('costY2').value) || 0,
-            parseFloat(document.getElementById('costY3').value) || 0,
-            0, // Year 4 (default to 0)
-            0  // Year 5 (default to 0)
-        ];
+        // 1. Calculate Training Cost
+        const numUsers = parseFloat(document.getElementById('numUsers').value) || 0;
+        const tHours = parseFloat(document.getElementById('trainingHours').value) || 0;
+        const tLabor = parseFloat(document.getElementById('trainingLaborRate').value) || 0;
+        const tOther = parseFloat(document.getElementById('trainingOtherPerUser').value) || 0;
         
-        const total3YrCost = costs[0] + costs[1] + costs[2];
-        document.getElementById('totalInvestment').innerText = '$' + total3YrCost.toLocaleString();
+        const totalTrainingCost = (numUsers * tHours * tLabor) + (numUsers * tOther);
+        document.getElementById('totalTrainingCostDisplay').value = '$' + Math.round(totalTrainingCost).toLocaleString();
+
+        // 2. Setup Annual Software Costs
+        const softY1 = parseFloat(document.getElementById('costY1').value) || 0;
+        const softY2 = parseFloat(document.getElementById('costY2').value) || 0;
+        const softY3 = parseFloat(document.getElementById('costY3').value) || 0;
+
+        const year1TotalCost = softY1 + totalTrainingCost;
+        const costs = [year1TotalCost, softY2, softY3, 0, 0];
+        
+        document.getElementById('totalInvestment').innerText = '$' + Math.round(year1TotalCost).toLocaleString();
 
         const rate = (parseFloat(document.getElementById('discountRate').value) || 0) / 100;
         
-        // 2. Benefit Calculation
+        // 3. Benefit Calculation
         const requests = parseFloat(document.getElementById('annualRequests').value) || 0;
         const time = parseFloat(document.getElementById('resolveTime').value) || 0;
         const labor = parseFloat(document.getElementById('laborRate').value) || 0;
@@ -148,18 +188,16 @@
         document.getElementById('confidenceLabel').innerText = Math.round(confidence * 100);
         document.getElementById('netSavings').innerText = '$' + Math.round(adjustedSavings).toLocaleString();
 
-        // 3. 5-Year Financial Engine
+        // 4. Financial Loop
         let tableHTML = "";
         let cumulativeNPV = 0;
         let chartData = [];
         let labels = [];
         
-        // We treat Year 1 as the first period of cash flow (Investment + Savings)
         for (let t = 1; t <= 5; t++) {
             const currentYearCost = costs[t-1] || 0;
             const annualCashFlow = adjustedSavings - currentYearCost;
             
-            // PV = Cash Flow / (1 + r)^t
             const pv = annualCashFlow / Math.pow((1 + rate), t);
             cumulativeNPV += pv;
             
@@ -169,7 +207,7 @@
             const isPos = cumulativeNPV >= 0;
             tableHTML += `<tr>
                 <td>Year ${t}</td>
-                <td class="neg">-$${currentYearCost.toLocaleString()}</td>
+                <td class="neg">-$${Math.round(currentYearCost).toLocaleString()}</td>
                 <td>$${Math.round(adjustedSavings).toLocaleString()}</td>
                 <td style="font-weight:bold; color:${isPos ? 'var(--accent)' : '#ef4444'}">
                     ${isPos ? '' : '-'}$${Math.abs(Math.round(cumulativeNPV)).toLocaleString()}
@@ -177,24 +215,15 @@
             </tr>`;
         }
 
-        // 4. Payback Logic (Month where Cumul NPV crosses 0)
-        // Since costs are spread out, we check the chartData
+        // 5. Payback (Simple)
         let paybackText = "Non-Recoverable";
         for (let i = 0; i < chartData.length; i++) {
             if (chartData[i] >= 0) {
-                // Approximate linear interpolation for months
-                const prevNPV = i === 0 ? -costs[0] : chartData[i-1];
-                const currentNPV = chartData[i];
-                if (currentNPV > 0) {
-                   paybackText = (i + 1) <= 1 ? "Year 1" : `~Year ${i + 1}`;
-                   // Simplification for the dashboard
-                   break;
-                }
+                paybackText = (i + 1) <= 1 ? "Year 1" : `Year ${i + 1}`;
+                break;
             }
         }
         document.getElementById('paybackVal').innerText = paybackText;
-
-        document.getElementById('cashflow-table').innerHTML = tableHTML;
         document.getElementById('npvFinal').innerText = '$' + Math.round(cumulativeNPV).toLocaleString();
         
         updateChart(chartData, labels);
